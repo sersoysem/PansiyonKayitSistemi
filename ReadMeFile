@@ -1,0 +1,111 @@
+//HosGeldiniz Formu
+
+Forma eklenen progressBarın 5 saniyelik açılma süresi vardır. Bu süre tamamlandığında otomatik olarak admin giriş formu açılmaktadır.
+
+
+//AdminGiris Formu
+
+Form açıldığında ilgili textBoxlara kullanıcı adı ve şifreyi girilmektedir. Giriş butonuna tıkladığında bilgiler doğruysa direkt AnaForm ekranına yönlendirilir. 
+Şifre doğru girmek için 5 hak tanımlanmıştır. Eğer bilgiler yanlışsa "Kullanıcı adı veya şifre hatalı. Kalan deneme hakkı ...." uyarısı alınmaktadır. Tekrar bilgileri girip 
+denenebilir ya da textBoxların altında bulunan Şifremi Unuttum linkLabelına tıklayarak Şifre Güncelle formu açılabilmektedir. Buradan şifre güncellenebilmektedir. 
+
+//Sifre Güncelle Formu
+Bu ekranda kişiye özel verilmiş olan kullanıcı id'sini ve yeni şifreyi girerek eski şifre değiştirilebilmektedir. Bu formdan çıkıp Admin Giriş formuna gelindiğinde 
+yeni şifre girilerek AnaForm ekranına yönlendirilmektedir. 
+
+//Ana Form
+Bu ekranda programın özelliklerini içeren 9 buton 1 adet tool strip vardır. Toolstripte günün menüsü, hava durumu, gazeteler, radyo, en yakın marketler, 
+şehrin gezilecek yerleri ve en yakında bulunan hastanelerle ilgili bilgi veren butonlar mevcuttur. Formun alt tarafında güncel tarih ve saat yer almaktadır. 
+Sayfanın alt tarafında bulunan butonların işlevleri ve hangi istek üzerine açılabileceği aşağıda verilmiştir:
+1- Yeni Müşteri Ekle Butonu: Yeni müşteri ekle formunun açılmasını sağlar.
+2- Müşteriler Butonu: Müşteriler formunun açılmasını sağlar.
+3- Odalar Butonu: Odalar formunun açılmasını sağlar.
+4- Stoklar Butonu: Stoklar formunun açılmasını sağlar.
+5- Gelir Gider Butonu: Gelir Gider formunun açılmasını sağlar.
+6- Faturalar Butonu: Fatura oluşturma formunun açılmasını sağlar.
+7- Müşteri Mesajları: Müşterilen yorumlarının bulunduğu formun açılmasını sağlar.
+8- Hakkımızda Butonu: Programın hangi yılda kim tarafından, nerede yazıldığına dair bilgileri gösterir.
+9- Çıkış Butonu: Butona basıldığında program sonlanır.
+
+
+//Günün Menüsü Formu
+
+Haftalık olarak girilmiş olan günlük menüleri güncel tarihe göre günlük olarak düzenler. Formun sağ tarafında güncel tarih ve saat yer almaktadır.
+
+
+//Hava Durumu Formu
+
+Veri tabanına kaydedilmiş olan hava durumlarını gün id’sine göre günlük olarak gösterir. Formun sağ tarafında güncel tarih ve saat yer almaktadır. 
+
+
+//Gazeteler Formu
+
+İnternetten alınan verilere göre gazete isimlerinin olduğu butonlara basıldığında ismin olduğu gazete formun alt kısmında yer alan pencerede açılmaktadır.
+
+
+//Radyo Formu
+ 
+Bu formda 3 farklı kanalı olan radyo mevcuttur. Kanal numaralarına basılarak kanallar arası değişim yapılabilmektedir.
+
+
+// Marketler Formu
+
+Bu formda En Yakın Marketleri göster butonuna basıldığında konuma göre çevredeki en yakın marketler pencerede gösterilir.
+
+
+//Gezi Formu
+
+Gezilecek Yerleri Göster butonuna basıldığında internette bulunan şehir gezi rehberi sayfasını pencereye aktarır.
+
+
+//Hastane Formu
+
+En yakın hastaneleri göster butonuna tıklandığında konuma göre çevredeki en yakın hastaneleri pencerede gösterir.
+
+
+//Yeni Müşteri Ekle Formu
+
+Bu formda müşterinin adı, soyadı, cinsiyeti, mail bilgileri, telefon numarası, giriş-çıkış tarihleri ve seçtiği oda numarasına göre bilgileri kaydet butonuna tıklandığında 
+programa kaydedilmektedir.
+Giriş çıkış tarihlerini girdiğinde Ucret kısmı geceliği 200 lira olacak şekilde otomatik olarak hesap edilip ücret textBoxına aktarılmaktadır.  
+Formun sağ tarafında bulunan oda butonlarından yeşil renkli olanlara tıklanarak seçilen oda numarası Oda No textBox'ına aktarılmaktadır.
+
+
+//Müşteriler Formu
+
+Mevcut müşterilerin bilgilerini verileri görüntüle butonuyla verileri görüp, isimlerine göre arama yaparak; giriş çıkış tarihlerine göre kayıt güncelleme ve silme 
+işlemleri gerçekleştirilir. 
+Verileri görüntüle butonuna basıldığında formun alt kısmında verilen listview kısmında müşteri bilgileri bölümlere ayrılmış şekilde gözükmektedir. 
+Arama çubuğuna müşterinin ismini girip ara butonuna tıklandığı zamanda istenilen müşterinin bilgilerine ulaşılabilir. 
+Seçilen müşterinin id numarasına çift tıklandığında müşteri bilgileri ilgili kısımlara otomatik aktarılmaktadır. 
+Bu kısımlarda değişiklik yapıldığında güncelle butonuna basılarak değişiklikler kaydedilmektedir. 
+Sil butonuna basıldığında müşterinin otelden çıkışı sağlanmaktadır.
+Temizle butonu müşteri bilgilerinin aktarıldığı kısımların temizlenmesini sıfırlanmış hale dönmelerini sağlamaktadır. 
+
+
+//Odalar Formu
+Bu kısımda pansiyonda bulunan müşterilerin seçtikleri odalara göre odalara ait butonlar yeşil(boş) veya kırmızı(dolu) renkli gözükmektedir. Kırmızı renkli odalarda 
+kimin kaldığını belirtmek için butona o odayı tercih eden müşterinin adı aktarılır. Kırmızı renkli butonlara basıldığında fatura oluştur formu açılmaktadır.
+
+
+// Stoklar Formu
+Pansiyondaki harcamaları (Mutfak masrafları, faturalar vs.)liste halinde görerek yeni harcamalarımızı kaydetmemizi sağlayan formdur. Aşağıda bulunan progressbara 
+her stok kullandığımızda işlem yapılarak 1000 adete ulaştığında “Stoklarınız azalıyor.” uyarısı alınmaktadır. 
+
+
+//Gelir Gider Formu
+Bu formda pansiyonda kalan müşterilerin ödedikleri ücret miktarlarına göre kasadaki toplam tutar (gelir) gözükmektedir. 
+Altında pansiyona ait harcamalar stoklar formundan çekilerek ilgili kısımlara toplam olacak şekilde aktarılır.
+Formun sağ kısmında bulunan personel sayısı kısmına girilen kişi sayısınca kişi başı 1500 olacak şekilde pansiyonda çalışan personellerin maaş hesabı yapılır. 
+Hesapla butonuna basıldığında kasadaki toplam tutardan giderler çıkarılarak Aylık Net Kâr hesaplanmaktadır. 
+
+
+//Faturalar Formu
+Formun en üstünde yer alan textBoxa fatura oluşturulmak istenen müşterinin adı girilir ve ara butonuna tıklanır. Listview kısmında verilen müşteri ismine çift 
+tıklandığında Fatura groupBoxında bulunan kısımlara bilgiler aktarılmaktadır. Fatura oluştur butonuna basıldığında sadece fatura groupBoxının ekran görüntüsü alınarak masaüstünde 
+Faturalar klasörüne kaydedilmektedir. 
+
+
+//Müşteri Mesajları Formu
+Formda en üstte bulunan textBoxa isim girilir. Altında bulunan textboxa müşterinin talepleri ve önerileri yazılır ve kaydet butonuna basıldığında kaydedilmektedir.
+Listview kısmında öneride ve şikayette bulunan tüm müşterilerin talepleri gösterilmektedir.
