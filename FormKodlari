@@ -1,0 +1,1867 @@
+
+
+	//Hos Geldiniz Formu
+
+using System;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class HosGeldiniz : Form
+    {
+        public HosGeldiniz()
+        {
+            InitializeComponent();
+        }
+
+        int startPoint = 0;
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            startPoint += 2;
+            progressBar1.Value = startPoint;
+            if (progressBar1.Value == 100)
+            {
+                progressBar1.Value = 0;
+                timer1.Stop();
+
+                this.Hide(); // Formu kapat
+
+                FrmAdminGiris fr = new FrmAdminGiris();
+                fr.ShowDialog();
+            }
+        }
+
+        private void HosGeldiniz_Load(object sender, EventArgs e)
+        {
+            timer1.Start();
+        }
+    }
+}
+
+
+
+	//Admin Giriş Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.Sql;
+using System.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmAdminGiris : Form
+    {
+        SqlConnection baglanti = new SqlConnection(@"Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+        private int girisDenemesi = 5;
+        public FrmAdminGiris()
+        {
+            InitializeComponent();
+        }
+        private void btngiris_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                baglanti.Open();
+                string sql = "select * from parola where Ad= @adi AND Sifre= @sifresi ";
+                SqlParameter prm1 = new SqlParameter("adi", txtkuladi.Text.Trim());
+                SqlParameter prm2 = new SqlParameter("sifresi", txtprl.Text.Trim());
+                SqlCommand komut = new SqlCommand(sql, baglanti);
+                komut.Parameters.Add(prm1);
+                komut.Parameters.Add(prm2);
+                DataTable dt = new DataTable();
+                SqlDataAdapter da = new SqlDataAdapter(komut);
+                da.Fill(dt);
+
+                if (dt.Rows.Count > 0)
+                {
+                    FrmAnaform fr = new FrmAnaform();
+                    fr.Show();
+                }
+                else
+                {
+                    girisDenemesi--; 
+                    MessageBox.Show("Kullanıcı adı veya şifreniz hatalı. Kalan Deneme Hakkı: " + girisDenemesi);
+
+                    if (girisDenemesi == 0)
+                    {
+                        btngiris.Enabled = false; 
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+
+            }
+            finally
+            {
+                baglanti.Close();
+            }
+        }
+       
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            FrmSifreGuncelle fr1 = new FrmSifreGuncelle();
+            fr1.Show();
+
+        }
+    }
+}
+
+	
+
+
+
+	//Sifre Güncelle Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmSifreGuncelle : Form
+    {
+        public FrmSifreGuncelle()
+        {
+            InitializeComponent();
+        }
+
+        SqlConnection baglanti = new SqlConnection(@"Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+
+        int id = 0;
+
+        private void btnGuncelle_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            SqlCommand komut= new SqlCommand("update parola set Sifre="+ txtSifre.Text.ToString()+"where id= " + txtKulAdi.Text.ToString(),baglanti);
+            komut.ExecuteNonQuery();
+            baglanti.Close();
+            MessageBox.Show("Şifreniz Başarıyla Değiştirildi.");
+        }
+    }
+}
+
+
+
+
+
+
+	//Ana Sayfa Fromu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmAnaform : Form
+    {
+        public FrmAnaform()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            FrmAdminGiris fr = new FrmAdminGiris();
+            fr.Show();
+            this.Hide();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            FrmMusteriler fr= new FrmMusteriler();
+            fr.Show();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            YeniMusteriEkle fr= new YeniMusteriEkle();  
+            fr.Show();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Fırat Pansiyon Uygulaması / Semra Ersoy / 2023-Elazığ");
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            FrmOdalar fr = new FrmOdalar();
+            fr.Show();
+        }
+
+        private void FrmAnaform_Load(object sender, EventArgs e)
+        {
+           timer1.Start();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            label1.Text = DateTime.Now.ToLongDateString();
+            label2.Text = DateTime.Now.ToLongTimeString();
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            GelirGider fr= new GelirGider();
+            fr.Show();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            FrmProgressBarcs fr= new FrmProgressBarcs();  
+            fr.Show();
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            FrmGununMenusu fr = new FrmGununMenusu();
+            fr.Show();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            Mesajlar fr = new Mesajlar();
+            fr.Show();
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            FrmHavaDurumu fr = new FrmHavaDurumu();
+            fr.Show();
+        }
+
+        private void Haberler_Click(object sender, EventArgs e)
+        {
+            FrmGazete frm = new FrmGazete();
+            frm.Show();
+        }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            FrmRadyo frm = new FrmRadyo();
+            frm.Show();
+        }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            FrmMarket fr = new FrmMarket();
+            fr.Show();
+        }
+
+        private void Hastane_Click(object sender, EventArgs e)
+        {
+            FrmHastane frm = new FrmHastane();  
+            frm.Show();
+        }
+
+        private void Turistik_Click(object sender, EventArgs e)
+        {
+            FrmGezi fr = new FrmGezi();
+            fr.Show();
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            FrmFaturalar frm = new FrmFaturalar();
+            frm.Show();
+        }
+    }
+}
+
+
+
+
+
+	//Yeni Müşteri Ekle Formu Kodları
+
+        using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.Sql;
+using System.Data.SqlClient;
+
+namespace Firat_Pansiyon
+{
+    public partial class YeniMusteriEkle : Form
+    {
+        public YeniMusteriEkle()
+        {
+            InitializeComponent();
+        }
+        SqlConnection baglanti = new SqlConnection("Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+
+        private void YeniMusteriEkle_Load(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            SqlCommand komut1 = new SqlCommand("SELECT Adi, Soyadi FROM MusteriEkle2 WHERE OdaNo = 101", baglanti);
+            SqlDataReader oku1 = komut1.ExecuteReader();
+
+            if (oku1.Read())
+            {
+                if (!oku1.IsDBNull(oku1.GetOrdinal("Adi")))
+                {
+                    btnOda101.Text = oku1["Adi"].ToString() + " " + oku1["Soyadi"].ToString();
+                    btnOda101.BackColor = Color.Red; // Oda doluysa kırmızı renk
+                    btnOda101.Enabled = false;
+                }
+                else
+                {
+                    btnOda101.Text = "101";
+                    btnOda101.BackColor = Color.Green; // Oda boşsa yeşil renk
+                    btnOda101.Enabled = true;
+                }
+            }
+            baglanti.Close();
+
+
+
+            baglanti.Open();
+            SqlCommand komut2 = new SqlCommand("SELECT Adi, Soyadi FROM MusteriEkle2 WHERE OdaNo = 102", baglanti);
+            SqlDataReader oku2 = komut2.ExecuteReader();
+
+            if (oku2.Read())
+            {
+                if (!oku2.IsDBNull(oku2.GetOrdinal("Adi")))
+                {
+                    btnOda102.Text = oku2["Adi"].ToString() + " " + oku2["Soyadi"].ToString();
+                    btnOda102.BackColor = Color.Red; // Oda doluysa kırmızı renk
+                    btnOda102.Enabled = false;
+                }
+                else
+                {
+                    btnOda102.Text = "102";
+                    btnOda102.BackColor = Color.Green; // Oda boşsa yeşil renk
+                    btnOda102.Enabled = true;
+                }
+            }
+            baglanti.Close();
+
+
+            baglanti.Open();
+            SqlCommand komut3 = new SqlCommand("SELECT Adi, Soyadi FROM MusteriEkle2 WHERE OdaNo = 103", baglanti);
+            SqlDataReader oku3 = komut3.ExecuteReader();
+
+            if (oku3.Read())
+            {
+                if (!oku3.IsDBNull(oku3.GetOrdinal("Adi")))
+                {
+                    btnOda103.Text = oku3["Adi"].ToString() + " " + oku3["Soyadi"].ToString();
+                    btnOda103.BackColor = Color.Red; // Oda doluysa kırmızı renk
+                    btnOda103.Enabled = false;
+                }
+                else
+                {
+                    btnOda103.Text = "103";
+                    btnOda103.BackColor = Color.Green; // Oda boşsa yeşil renk
+                    btnOda103.Enabled = true;
+                }
+            }
+            baglanti.Close();
+
+
+            baglanti.Open();
+            SqlCommand komut4 = new SqlCommand("SELECT Adi, Soyadi FROM MusteriEkle2 WHERE OdaNo = 104", baglanti);
+            SqlDataReader oku4 = komut4.ExecuteReader();
+
+            if (oku4.Read())
+            {
+                if (!oku4.IsDBNull(oku4.GetOrdinal("Adi")))
+                {
+                    btnOda104.Text = oku4["Adi"].ToString() + " " + oku4["Soyadi"].ToString();
+                    btnOda104.BackColor = Color.Red; // Oda doluysa kırmızı renk
+                    btnOda104.Enabled = false;
+                }
+                else
+                {
+                    btnOda104.Text = "104";
+                    btnOda104.BackColor = Color.Green; // Oda boşsa yeşil renk
+                    btnOda104.Enabled = true;
+                }
+            }
+            baglanti.Close();
+
+
+            baglanti.Open();
+            SqlCommand komut5 = new SqlCommand("SELECT Adi, Soyadi FROM MusteriEkle2 WHERE OdaNo = 105", baglanti);
+            SqlDataReader oku5 = komut5.ExecuteReader();
+
+            if (oku5.Read())
+            {
+                if (!oku5.IsDBNull(oku5.GetOrdinal("Adi")))
+                {
+                    btnOda105.Text = oku5["Adi"].ToString() + " " + oku5["Soyadi"].ToString();
+                    btnOda105.BackColor = Color.Red; // Oda doluysa kırmızı renk
+                    btnOda105.Enabled = false;
+                }
+                else
+                {
+                    btnOda105.Text = "105";
+                    btnOda105.BackColor = Color.Green; // Oda boşsa yeşil renk
+                    btnOda105.Enabled = true;
+                }
+            }
+            baglanti.Close();
+
+
+            baglanti.Open();
+            SqlCommand komut6 = new SqlCommand("SELECT Adi, Soyadi FROM MusteriEkle2 WHERE OdaNo = 106", baglanti);
+            SqlDataReader oku6 = komut6.ExecuteReader();
+
+            if (oku6.Read())
+            {
+                if (!oku6.IsDBNull(oku6.GetOrdinal("Adi")))
+                {
+                    btnOda106.Text = oku6["Adi"].ToString() + " " + oku6["Soyadi"].ToString();
+                    btnOda106.BackColor = Color.Red; // Oda doluysa kırmızı renk
+                    btnOda106.Enabled = false;
+                }
+                else
+                {
+                    btnOda106.Text = "106";
+                    btnOda106.BackColor = Color.Green; // Oda boşsa yeşil renk
+                    btnOda106.Enabled = true;
+                }
+            }
+            baglanti.Close();
+
+
+            baglanti.Open();
+            SqlCommand komut7 = new SqlCommand("SELECT Adi, Soyadi FROM MusteriEkle2 WHERE OdaNo = 107", baglanti);
+            SqlDataReader oku7 = komut7.ExecuteReader();
+
+            if (oku7.Read())
+            {
+                if (!oku7.IsDBNull(oku7.GetOrdinal("Adi")))
+                {
+                    btnOda107.Text = oku7["Adi"].ToString() + " " + oku7["Soyadi"].ToString();
+                    btnOda107.BackColor = Color.Red; // Oda doluysa kırmızı renk
+                    btnOda107.Enabled = false;
+                }
+                else
+                {
+                    btnOda107.Text = "107";
+                    btnOda107.BackColor = Color.Green; // Oda boşsa yeşil renk
+                    btnOda107.Enabled = true;
+                }
+            }
+            baglanti.Close();
+
+
+            baglanti.Open();
+            SqlCommand komut8 = new SqlCommand("SELECT Adi, Soyadi FROM MusteriEkle2 WHERE OdaNo = 108", baglanti);
+            SqlDataReader oku8 = komut8.ExecuteReader();
+
+            if (oku8.Read())
+            {
+                if (!oku8.IsDBNull(oku8.GetOrdinal("Adi")))
+                {
+                    btnOda108.Text = oku8["Adi"].ToString() + " " + oku8["Soyadi"].ToString();
+                    btnOda108.BackColor = Color.Red; // Oda doluysa kırmızı renk
+                    btnOda108.Enabled = false;
+                }
+                else
+                {
+                    btnOda108.Text = "108";
+                    btnOda108.BackColor = Color.Green; // Oda boşsa yeşil renk
+                    btnOda108.Enabled = true;
+                }
+            }
+            baglanti.Close();
+
+
+            baglanti.Open();
+            SqlCommand komut9 = new SqlCommand("SELECT Adi, Soyadi FROM MusteriEkle2 WHERE OdaNo = 109", baglanti);
+            SqlDataReader oku9 = komut9.ExecuteReader();
+
+            if (oku9.Read())
+            {
+                if (!oku9.IsDBNull(oku9.GetOrdinal("Adi")))
+                {
+                    btnOda109.Text = oku9["Adi"].ToString() + " " + oku9["Soyadi"].ToString();
+                    btnOda109.BackColor = Color.Red; // Oda doluysa kırmızı renk
+                    btnOda109.Enabled = false;
+                }
+                else
+                {
+                    btnOda109.Text = "109";
+                    btnOda109.BackColor = Color.Green; // Oda boşsa yeşil renk
+                    btnOda109.Enabled = true;
+                }
+            }
+            baglanti.Close();
+
+        }
+
+        private void btnOda101_Click(object sender, EventArgs e)
+        {
+            txtOdaNo.Text = "101";
+
+            if (txtAdi.Text.Trim() == "" || txtSoyadi.Text.Trim() == "" || comboBox1.SelectedIndex == -1 || MskTxtTelefonNo.Text.Trim() == "" || txtMail.Text.Trim() == "" || txtTC.Text.Trim() == "")
+            {
+                MessageBox.Show("Lütfen müşteri bilgilerini eksiksiz doldurun.");
+                return;
+            }
+        }
+
+        private void btnOda102_Click(object sender, EventArgs e)
+        {
+            txtOdaNo.Text = "102";
+
+            if (txtAdi.Text.Trim() == "" || txtSoyadi.Text.Trim() == "" || comboBox1.SelectedIndex == -1 || MskTxtTelefonNo.Text.Trim() == "" || txtMail.Text.Trim() == "" || txtTC.Text.Trim() == "")
+            {
+                MessageBox.Show("Lütfen müşteri bilgilerini eksiksiz doldurun.");
+                return;
+            }
+        }
+
+        private void btnOda103_Click(object sender, EventArgs e)
+        {
+            txtOdaNo.Text = "103";
+
+            if (txtAdi.Text.Trim() == "" || txtSoyadi.Text.Trim() == "" || comboBox1.SelectedIndex == -1 || MskTxtTelefonNo.Text.Trim() == "" || txtMail.Text.Trim() == "" || txtTC.Text.Trim() == "")
+            {
+                MessageBox.Show("Lütfen müşteri bilgilerini eksiksiz doldurun.");
+                return;
+            }
+        }
+
+        private void btnOda104_Click(object sender, EventArgs e)
+        {
+            txtOdaNo.Text = "104";
+
+            if (txtAdi.Text.Trim() == "" || txtSoyadi.Text.Trim() == "" || comboBox1.SelectedIndex == -1 || MskTxtTelefonNo.Text.Trim() == "" || txtMail.Text.Trim() == "" || txtTC.Text.Trim() == "")
+            {
+                MessageBox.Show("Lütfen müşteri bilgilerini eksiksiz doldurun.");
+                return;
+            }
+        }
+
+        private void btnOda105_Click(object sender, EventArgs e)
+        {
+            txtOdaNo.Text = "105";
+
+            if (txtAdi.Text.Trim() == "" || txtSoyadi.Text.Trim() == "" || comboBox1.SelectedIndex == -1 || MskTxtTelefonNo.Text.Trim() == "" || txtMail.Text.Trim() == "" || txtTC.Text.Trim() == "")
+            {
+                MessageBox.Show("Lütfen müşteri bilgilerini eksiksiz doldurun.");
+                return;
+            }
+        }
+
+        private void btnOda106_Click(object sender, EventArgs e)
+        {
+            txtOdaNo.Text = "106";
+
+            if (txtAdi.Text.Trim() == "" || txtSoyadi.Text.Trim() == "" || comboBox1.SelectedIndex == -1 || MskTxtTelefonNo.Text.Trim() == "" || txtMail.Text.Trim() == "" || txtTC.Text.Trim() == "")
+            {
+                MessageBox.Show("Lütfen müşteri bilgilerini eksiksiz doldurun.");
+                return;
+            }
+        }
+
+        private void btnOda107_Click(object sender, EventArgs e)
+        {
+            txtOdaNo.Text = "107";
+
+            if (txtAdi.Text.Trim() == "" || txtSoyadi.Text.Trim() == "" || comboBox1.SelectedIndex == -1 || MskTxtTelefonNo.Text.Trim() == "" || txtMail.Text.Trim() == "" || txtTC.Text.Trim() == "")
+            {
+                MessageBox.Show("Lütfen müşteri bilgilerini eksiksiz doldurun.");
+                return;
+            }
+        }
+
+        private void btnOda108_Click(object sender, EventArgs e)
+        {
+            txtOdaNo.Text = "108";
+
+            if (txtAdi.Text.Trim() == "" || txtSoyadi.Text.Trim() == "" || comboBox1.SelectedIndex == -1 || MskTxtTelefonNo.Text.Trim() == "" || txtMail.Text.Trim() == "" || txtTC.Text.Trim() == "")
+            {
+                MessageBox.Show("Lütfen müşteri bilgilerini eksiksiz doldurun.");
+                return;
+            }
+        }
+
+        private void btnOda109_Click(object sender, EventArgs e)
+        {
+            txtOdaNo.Text = "109";
+
+            if (txtAdi.Text.Trim() == "" || txtSoyadi.Text.Trim() == "" || comboBox1.SelectedIndex == -1 || MskTxtTelefonNo.Text.Trim() == "" || txtMail.Text.Trim() == "" || txtTC.Text.Trim() == "")
+            {
+                MessageBox.Show("Lütfen müşteri bilgilerini eksiksiz doldurun.");
+                return;
+            }
+        }
+
+
+        private void btnOdaDolu_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Kırmızı Renkli Butonlar Dolu Odaları Gösterir.");
+        }
+
+        private void btnOdaBos_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Yeşil Renkli Butonlar Dolu Odaları Gösterir.");
+        }
+
+        private void DtpCikis_ValueChanged(object sender, EventArgs e)
+        {
+            int ucret;
+            DateTime kucukTarih = Convert.ToDateTime(DtpGiris.Text);
+            DateTime buyukTarih = Convert.ToDateTime(DtpCikis.Text);
+            
+            TimeSpan sonuc;
+            sonuc= buyukTarih - kucukTarih;
+            label11.Text = sonuc.TotalDays.ToString();
+
+            ucret = Convert.ToInt32(label11.Text)*200;
+            txtUcret.Text = ucret.ToString();
+        }
+
+        private void btnKaydet_Click(object sender, EventArgs e)
+        {
+            if (txtOdaNo.Text != "")
+            {
+                baglanti.Open();
+                SqlCommand komut = new SqlCommand("insert into MusteriEkle2 (Adi,Soyadi,Cinsiyet,Telefon,Mail,[TC],OdaNo,Ucret,GirisTarihi,CikisTarihi) values ('" + txtAdi.Text + "','" + txtSoyadi.Text + "','" + comboBox1.Text + "','" + MskTxtTelefonNo.Text + "','" + txtMail.Text + "','" + txtTC.Text + "','" + txtOdaNo.Text + "','" + txtUcret.Text + "','" + DtpGiris.Value.ToString("yyyy-MM-dd") + "','" + DtpCikis.Value.ToString("yyyy-MM-dd") + "')", baglanti);
+                komut.ExecuteNonQuery();
+                baglanti.Close();
+                MessageBox.Show("Müşteri kaydı başarıyla yapıldı.");
+            }
+            else
+            {
+                MessageBox.Show("Lütfen bir oda seçin.");
+            }
+        }
+    }
+}
+
+
+	//Müsteriler Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.Sql;
+using System.Data.SqlClient;
+using Microsoft.SqlServer.Server;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmMusteriler : Form
+    {
+        public FrmMusteriler()
+        {
+            InitializeComponent();
+        }
+        SqlConnection baglanti = new SqlConnection(@"Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+
+        private void verilergoster()
+        {
+            listView1.Items.Clear();
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("SELECT * FROM MusteriEkle2 ", baglanti);
+            SqlDataReader oku = komut.ExecuteReader();
+            while (oku.Read())
+            {
+                ListViewItem ekle = new ListViewItem();
+                ekle.Text = oku["Musteriid"].ToString();
+                ekle.SubItems.Add(oku["Adi"].ToString());
+                ekle.SubItems.Add(oku["Soyadi"].ToString());
+                ekle.SubItems.Add(oku["Cinsiyet"].ToString());
+                ekle.SubItems.Add(oku["Telefon"].ToString());
+                ekle.SubItems.Add(oku["Mail"].ToString());
+                ekle.SubItems.Add(oku["TC"].ToString());
+                ekle.SubItems.Add(oku["OdaNo"].ToString());
+                ekle.SubItems.Add(oku["Ucret"].ToString());
+                ekle.SubItems.Add(oku["GirisTarihi"].ToString());
+                ekle.SubItems.Add(oku["CikisTarihi"].ToString());
+
+
+
+                listView1.Items.Add(ekle);
+            }
+            baglanti.Close();
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            verilergoster();
+        }
+
+        int id = 0;
+        private void listView1_DoubleClick(object sender, EventArgs e)
+        {
+            id = int.Parse(listView1.SelectedItems[0].SubItems[0].Text);
+            txtAdi.Text = listView1.SelectedItems[0].SubItems[1].Text;
+            txtSoyadi.Text = listView1.SelectedItems[0].SubItems[2].Text;
+            comboBox1.Text = listView1.SelectedItems[0].SubItems[3].Text;
+            MskTxtTelefonNo.Text = listView1.SelectedItems[0].SubItems[4].Text;
+            txtMail.Text = listView1.SelectedItems[0].SubItems[5].Text;
+            txtTC.Text = listView1.SelectedItems[0].SubItems[6].Text;
+            txtOdaNo.Text = listView1.SelectedItems[0].SubItems[7].Text;
+            txtUcret.Text = listView1.SelectedItems[0].SubItems[8].Text;
+            DtpGiris.Text = listView1.SelectedItems[0].SubItems[9].Text;
+            DtpCikis.Text = listView1.SelectedItems[0].SubItems[10].Text;
+        }
+
+        private void btnTemizle_Click(object sender, EventArgs e)
+        {
+            txtAdi.Clear();
+            txtSoyadi.Clear();
+            comboBox1.Text = "";
+            MskTxtTelefonNo.Clear();
+            txtMail.Text = "";
+            txtTC.Clear();
+            txtOdaNo.Clear();
+            txtUcret.Clear();
+            DtpGiris.Text = "";
+            DtpCikis.Text = "";
+        }
+
+        private void btnGuncelle_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            int ucret;
+            int tarih_hesap;
+            DateTime kucukTarih = Convert.ToDateTime(DtpGiris.Text);
+            DateTime buyukTarih = Convert.ToDateTime(DtpCikis.Text);
+
+            TimeSpan sonuc = buyukTarih - kucukTarih;
+            tarih_hesap = Convert.ToInt32(sonuc.TotalDays); // TimeSpan'den gün sayısına çevrildi
+
+            ucret = tarih_hesap * 200;
+            txtUcret.Text = ucret.ToString();
+
+            SqlCommand komut = new SqlCommand("UPDATE MusteriEkle2 SET Adi='" + txtAdi.Text + "',Soyadi='" + txtSoyadi.Text + "',Cinsiyet='" + comboBox1.Text + "',Telefon='" + MskTxtTelefonNo.Text + "',Mail='" + txtMail.Text + "',TC='" + txtTC.Text + "',OdaNo='" + txtOdaNo.Text + "',Ucret='" + txtUcret.Text + "',GirisTarihi='" + DtpGiris.Value.ToString("yyyy-MM-dd") + "',CikisTarihi='" + DtpCikis.Value.ToString("yyyy-MM-dd") + "' WHERE Musteriid=" + id + "", baglanti);
+
+            komut.ExecuteNonQuery();
+            baglanti.Close();
+            verilergoster();
+
+        }
+
+        private void btnAra_Click(object sender, EventArgs e)
+        {
+            listView1.Items.Clear();
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("select * from MusteriEkle2 where Adi like '%" + textBox1.Text + "%'", baglanti);
+            SqlDataReader oku = komut.ExecuteReader();
+            while (oku.Read())
+            {
+                ListViewItem ekle = new ListViewItem();
+                ekle.Text = oku["Musteriid"].ToString();
+                ekle.SubItems.Add(oku["Adi"].ToString());
+                ekle.SubItems.Add(oku["Soyadi"].ToString());
+                ekle.SubItems.Add(oku["Cinsiyet"].ToString());
+                ekle.SubItems.Add(oku["Telefon"].ToString());
+                ekle.SubItems.Add(oku["Mail"].ToString());
+                ekle.SubItems.Add(oku["TC"].ToString());
+                ekle.SubItems.Add(oku["OdaNo"].ToString());
+                ekle.SubItems.Add(oku["Ucret"].ToString());
+                ekle.SubItems.Add(oku["GirisTarihi"].ToString());
+                ekle.SubItems.Add(oku["CikisTarihi"].ToString());
+
+                listView1.Items.Add(ekle);
+            }
+            baglanti.Close();
+
+        }
+
+        private void btnSil_Click(object sender, EventArgs e)
+        {
+            
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("DELETE FROM MusteriEkle2 WHERE Musteriid = @id", baglanti);
+            komut.Parameters.AddWithValue("@id", id);
+            int rowsAffected = komut.ExecuteNonQuery();
+            baglanti.Close();
+
+            if (rowsAffected > 0)
+            {
+                verilergoster();
+            }
+            else
+            {
+               
+            }
+        }
+    }
+}
+
+
+
+
+
+	//Odalar Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.Sql;
+using System.Data.SqlClient;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmOdalar : Form
+    {
+        public FrmOdalar()
+        {
+            InitializeComponent();
+        }
+
+        SqlConnection baglanti = new SqlConnection(@"Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+
+        private void FrmOdalar_Load(object sender, EventArgs e)
+        {
+            CheckRoomAvailability("101", btnOda101);
+            CheckRoomAvailability("102", btnOda102);
+            CheckRoomAvailability("103", btnOda103);
+            CheckRoomAvailability("104", btnOda104);
+            CheckRoomAvailability("105", btnOda105);
+            CheckRoomAvailability("106", btnOda106);
+            CheckRoomAvailability("107", btnOda107);
+            CheckRoomAvailability("108", btnOda108);
+            CheckRoomAvailability("109", btnOda109);
+        }
+
+        private void CheckRoomAvailability(string roomNumber, Button button)
+        {
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand($"SELECT * FROM MusteriEkle2 WHERE OdaNo = {roomNumber}", baglanti);
+            SqlDataReader reader = komut.ExecuteReader();
+
+            if (reader.Read())
+            {
+                button.Text = $"{reader["Adi"]} {reader["Soyadi"]}";
+                if (button.Text != roomNumber)
+                {
+                    button.BackColor = Color.Red;
+                    
+                }
+            }
+
+            baglanti.Close();
+        }
+        private void btnOda101_Click_1(object sender, EventArgs e)
+        {
+            if (btnOda101.BackColor == Color.Red)
+            {
+                FrmFaturalar fr = new FrmFaturalar();
+                fr.Show();
+            }
+        }
+
+        private void btnOda102_Click_1(object sender, EventArgs e)
+        {
+            if (btnOda102.BackColor == Color.Red)
+            {
+                FrmFaturalar fr = new FrmFaturalar();
+                fr.Show();
+            }
+        }
+
+        private void btnOda103_Click(object sender, EventArgs e)
+        {
+            if (btnOda103.BackColor == Color.Red)
+            {
+                FrmFaturalar fr = new FrmFaturalar();
+                fr.Show();
+            }
+        }
+
+        private void btnOda104_Click_1(object sender, EventArgs e)
+        {
+            if (btnOda104.BackColor == Color.Red)
+            {
+                FrmFaturalar fr = new FrmFaturalar();
+                fr.Show();
+            }
+        }
+
+        private void btnOda105_Click_1(object sender, EventArgs e)
+        {
+            if (btnOda105.BackColor == Color.Red)
+            {
+                FrmFaturalar fr = new FrmFaturalar();
+                fr.Show();
+            }
+        }
+
+        private void btnOda106_Click_1(object sender, EventArgs e)
+        {
+            if (btnOda106.BackColor == Color.Red)
+            {
+                FrmFaturalar fr = new FrmFaturalar();
+                fr.Show();
+            }
+        }
+
+        private void btnOda107_Click_1(object sender, EventArgs e)
+        {
+            if (btnOda107.BackColor == Color.Red)
+            {
+                FrmFaturalar fr = new FrmFaturalar();
+                fr.Show();
+            }
+        }
+
+        private void btnOda108_Click_1(object sender, EventArgs e)
+        {
+            if (btnOda108.BackColor == Color.Red)
+            {
+                FrmFaturalar fr = new FrmFaturalar();
+                fr.Show();
+            }
+        }
+
+        private void btnOda109_Click_1(object sender, EventArgs e)
+        {
+            if (btnOda109.BackColor == Color.Red)
+            {
+                FrmFaturalar fr = new FrmFaturalar();
+                fr.Show();
+            }
+        }
+    }
+}
+
+
+
+
+
+	//Stoklar Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.Sql;
+using System.Data.SqlClient;
+
+namespace Firat_Pansiyon
+{
+    public partial class Stoklar : Form
+    {
+        public Stoklar()
+        {
+            InitializeComponent();
+        }
+        SqlConnection baglanti = new SqlConnection(@"Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+
+        private void veriler()
+        {
+            listView1.Items.Clear();
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("SELECT * FROM Stoklar",baglanti);
+            SqlDataReader oku = komut.ExecuteReader();
+            while (oku.Read())
+            {
+                ListViewItem ekle = new ListViewItem();
+                ekle.Text = oku["Gida"].ToString();
+                ekle.SubItems.Add(oku["Icecek"].ToString());
+                ekle.SubItems.Add(oku["Cerezler"].ToString());
+                listView1.Items.Add(ekle);
+            }
+            baglanti.Close();
+        }
+        private void veriler2()
+        {
+            listView2.Items.Clear();
+            baglanti.Open();
+            SqlCommand komut2 = new SqlCommand("SELECT * FROM Faturalar", baglanti);
+            SqlDataReader oku2 = komut2.ExecuteReader();
+            while (oku2.Read())
+            {
+                ListViewItem ekle = new ListViewItem();
+                ekle.Text = oku2["Elektrik"].ToString();
+                ekle.SubItems.Add(oku2["Su"].ToString());
+                ekle.SubItems.Add(oku2["dogalGaz"].ToString());
+                listView2.Items.Add(ekle);
+            }
+            baglanti.Close();
+        }
+
+        private void btnKaydet_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("insert into Stoklar(Gida,Icecek,Cerezler) values ('"+txtGidalar.Text+"','"+txtIcecekler.Text+"','"+txtAtistirmaliklar.Text+"')",baglanti );
+            komut.ExecuteNonQuery();
+            baglanti.Close() ;
+            veriler() ;
+
+        }
+
+        private void Stoklar_Load(object sender, EventArgs e)
+        {
+            progressBar1.Step = 10;
+            progressBar1.Maximum = 100;
+            progressBar1.BackColor = Color.Red;
+            progressBar1.ForeColor = Color.Green;
+            veriler();
+            veriler2();
+        }
+
+        private void btnKaydet2_Click(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("insert into Faturalar(Elektrik,Su,dogalGaz) values ('" + txtElektrik.Text + "','" + txtSu.Text + "','" + txtDogalgaz.Text + "')", baglanti);
+            komut.ExecuteNonQuery();
+            baglanti.Close();
+            veriler2();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            progressBar1.PerformStep();
+            if (progressBar1.Value == 100)
+            {
+                ShowStokUyarisi();
+            }
+        }
+
+        private void ShowStokUyarisi()
+        {
+            MessageBox.Show("Stoklarınız bitmiştir!", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+}
+
+
+
+
+
+
+	//Gelir Gider Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.Sql;
+using System.Data.SqlClient;
+
+
+namespace Firat_Pansiyon
+{
+    public partial class GelirGider : Form
+    {
+        public GelirGider()
+        {
+            InitializeComponent();
+        }
+        SqlConnection baglanti = new SqlConnection(@"Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int personel;
+
+            personel = Convert.ToInt16(textBox1.Text);
+            lblPersonelMaas.Text= (personel*1000).ToString();
+
+           
+            int sonuc = Convert.ToInt32(lblKasaToplam.Text) - (
+                        Convert.ToInt32(lblPersonelMaas.Text) +
+                        Convert.ToInt32(lblAlinanUrun1.Text) +
+                        Convert.ToInt32(lblAlinanUrun2.Text) +
+                        Convert.ToInt32(lblAlinanUrun3.Text) +
+                        Convert.ToInt32(lblFatura1.Text) +
+                        Convert.ToInt32(lblFatura2.Text) +
+                        Convert.ToInt32(lblFatura3.Text));
+
+            lblSonuc2.Text = sonuc.ToString();
+        }
+
+        private void GelirGider_Load(object sender, EventArgs e)
+        {
+
+            //Kasadaki toplam tutar
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("SELECT sum(Ucret) AS toplam FROM MusteriEkle2", baglanti);
+            SqlDataReader oku = komut.ExecuteReader();
+            while (oku.Read())
+            {
+                lblKasaToplam.Text = oku["toplam"].ToString();
+            }
+            baglanti.Close();
+
+
+            //Gida Giderleri
+
+            baglanti.Open();
+            SqlCommand komut2 = new SqlCommand("SELECT sum( Gida) AS toplam1 FROM Stoklar", baglanti);
+            SqlDataReader oku2 = komut2.ExecuteReader();
+            while (oku2.Read())
+            {
+                lblAlinanUrun1.Text = oku2["toplam1"].ToString();
+            }
+            baglanti.Close();
+
+
+
+            //İçecek Giderleri
+
+            baglanti.Open();
+            SqlCommand komut3 = new SqlCommand("SELECT sum(Icecek) AS toplam2 FROM Stoklar", baglanti);
+            SqlDataReader oku3 = komut3.ExecuteReader();
+            while (oku3.Read())
+            {
+                lblAlinanUrun2.Text = oku3["toplam2"].ToString();
+            }
+            baglanti.Close();
+
+
+
+
+            //Çerez Giderleri
+
+            baglanti.Open();
+            SqlCommand komut4 = new SqlCommand("SELECT sum(Cerezler) AS toplam3 FROM Stoklar", baglanti);
+            SqlDataReader oku4 = komut4.ExecuteReader();
+            while (oku4.Read())
+            {
+                lblAlinanUrun3.Text = oku4["toplam3"].ToString();
+            }
+            baglanti.Close();
+
+
+            //Elektrik Faturası
+
+            baglanti.Open();
+            SqlCommand komut5 = new SqlCommand("SELECT sum(Elektrik) AS toplam4 FROM Faturalar", baglanti);
+            SqlDataReader oku5 = komut5.ExecuteReader();
+            while (oku5.Read())
+            {
+                lblFatura1.Text = oku5["toplam4"].ToString();
+            }
+            baglanti.Close();
+
+
+            //Su Faturası
+
+            baglanti.Open();
+            SqlCommand komut6 = new SqlCommand("SELECT sum(Su) AS toplam5 FROM Faturalar", baglanti);
+            SqlDataReader oku6 = komut6.ExecuteReader();
+            while (oku6.Read())
+            {
+                lblFatura2.Text = oku6["toplam5"].ToString();
+            }
+            baglanti.Close();
+
+
+            //Doğal Gaz Faturası
+
+            baglanti.Open();
+            SqlCommand komut7 = new SqlCommand("SELECT sum(dogalGaz) AS toplam6 FROM Faturalar", baglanti);
+            SqlDataReader oku7 = komut7.ExecuteReader();
+            while (oku7.Read())
+            {
+                lblFatura3.Text = oku7["toplam6"].ToString();
+            }
+            baglanti.Close();
+        }
+    }
+}
+
+
+
+
+
+
+	//Faturalar Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.IO;
+
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmFaturalar : Form
+    {
+        public FrmFaturalar()
+        {
+            InitializeComponent();
+        }
+        SqlConnection baglanti = new SqlConnection(@"Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            lblTarih.Text = DateTime.Now.ToLongDateString();
+        }
+
+        private void FrmFaturalar_Load(object sender, EventArgs e)
+        {
+            timer1.Start();
+        }
+
+        private void btnAra_Click_1(object sender, EventArgs e)
+        {
+            listView1.Items.Clear();
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("select * from MusteriEkle2 where Adi like '%" + textBox1.Text + "%'", baglanti);
+            SqlDataReader oku = komut.ExecuteReader();
+            while (oku.Read())
+            {
+                ListViewItem ekle = new ListViewItem();
+                ekle.Text = oku["Musteriid"].ToString();
+                ekle.SubItems.Add(oku["Adi"].ToString());
+                ekle.SubItems.Add(oku["Soyadi"].ToString());
+                ekle.SubItems.Add(oku["Cinsiyet"].ToString());
+                ekle.SubItems.Add(oku["Telefon"].ToString());
+                ekle.SubItems.Add(oku["Mail"].ToString());
+                ekle.SubItems.Add(oku["TC"].ToString());
+                ekle.SubItems.Add(oku["OdaNo"].ToString());
+                ekle.SubItems.Add(oku["Ucret"].ToString());
+                ekle.SubItems.Add(oku["GirisTarihi"].ToString());
+                ekle.SubItems.Add(oku["CikisTarihi"].ToString());
+
+                listView1.Items.Add(ekle);
+            }
+            baglanti.Close();
+        }
+        int id = 0;
+
+        private void listView1_DoubleClick_1(object sender, EventArgs e)
+        {
+            id = int.Parse(listView1.SelectedItems[0].SubItems[0].Text);
+            lblMusteriAdi.Text = listView1.SelectedItems[0].SubItems[1].Text;
+            lblMusteriSoyadi.Text = listView1.SelectedItems[0].SubItems[2].Text;
+            lblTC.Text = listView1.SelectedItems[0].SubItems[6].Text;
+            lblOdaNumarasi.Text = listView1.SelectedItems[0].SubItems[7].Text;
+            lblUcret.Text = listView1.SelectedItems[0].SubItems[8].Text;
+            lblGirisTarihi.Text = listView1.SelectedItems[0].SubItems[9].Text;
+            lblCikisTarihi.Text = listView1.SelectedItems[0].SubItems[10].Text;
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            CaptureAndSaveScreenshot();
+        }
+        private void CaptureAndSaveScreenshot()
+        {
+            // groupBox1 kontrolünün sınırlarını al
+            Rectangle bounds = groupBox1.Bounds;
+
+            // Ekran görüntüsünü al
+            using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+            {
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    g.CopyFromScreen(new Point(160, 400), Point.Empty, bounds.Size);
+                }
+
+                // Klasör oluştur
+                string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Faturalar");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                // Dosyayı kaydet
+                string fileName = Path.Combine(folderPath, $"screenshot_{DateTime.Now:yyyyMMdd_HHmmss}.png");
+                bitmap.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
+
+                MessageBox.Show($"Ekran görüntüsü başarıyla kaydedildi:\n{fileName}", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+           
+        }
+    }
+}
+
+
+
+
+
+	//Musteri Mesajları Formu
+
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class Mesajlar : Form
+    {
+        SqlConnection baglanti = new SqlConnection(@"Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+
+        public Mesajlar()
+        {
+            InitializeComponent();
+        }
+
+        private void VerileriGoster()
+        {
+            listView1.Items.Clear();
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("SELECT * FROM Mesajlar2", baglanti);
+            SqlDataReader oku = komut.ExecuteReader();
+
+            while (oku.Read())
+            {
+                ListViewItem ekle = new ListViewItem();
+                ekle.Text = oku["Mesajid"].ToString();
+                ekle.SubItems.Add(oku["AdSoyad"].ToString());
+                ekle.SubItems.Add(oku["Mesaj"].ToString());
+                listView1.Items.Add(ekle);
+            }
+
+            baglanti.Close();
+        }
+
+        private void Mesajlar_Load(object sender, EventArgs e)
+        {
+            VerileriGoster();
+        }
+
+        private void btnKaydet_Click_1(object sender, EventArgs e)
+        {
+            baglanti.Open();
+            SqlCommand komut = new SqlCommand("INSERT INTO Mesajlar2(AdSoyad, Mesaj) VALUES('" + txtAd.Text + "','" + rtxtMesaj.Text + "')", baglanti);
+            komut.ExecuteNonQuery();
+            baglanti.Close();
+
+            // Clear the text fields after saving
+            txtAd.Text = "";
+            rtxtMesaj.Text = "";
+
+            // Refresh the ListView
+            VerileriGoster();
+        }
+        int id = 0;
+        private void listView1_DoubleClick(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count > 0)
+            {
+                id = int.Parse(listView1.SelectedItems[0].Text);
+                txtAd.Text = listView1.SelectedItems[0].SubItems[1].Text;
+                rtxtMesaj.Text = listView1.SelectedItems[0].SubItems[2].Text;
+            }
+        }
+
+    }
+}
+
+
+
+
+
+	//Progress Bar Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmProgressBarcs : Form
+    {
+        public FrmProgressBarcs()
+        {
+            InitializeComponent();
+        }
+
+        private void FrmProgressBarcs_Load(object sender, EventArgs e)
+        {
+            progressBar1.MarqueeAnimationSpeed = 10;
+            timer1.Interval = 5000;
+            timer1.Start();
+        }
+        int i= 0;
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            i++;
+            if (i == 1)
+            {
+                timer1.Stop();
+                this.Hide();
+
+                Stoklar fr = new Stoklar();
+                fr.Show();
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+	//Gunun Menusu Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmGununMenusu : Form
+    {
+        public FrmGununMenusu()
+        {
+            InitializeComponent();
+        }
+        SqlConnection baglanti = new SqlConnection(@"Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            lblTarih.Text = DateTime.Now.ToLongDateString();
+            lblSaat.Text = DateTime.Now.ToLongTimeString();
+            LoadDailyMenu();
+        }
+
+        private int GunId = 1;
+
+        private void FrmGununMenusu_Load(object sender, EventArgs e)
+        {
+            // TODO: Bu kod satırı 'pansiyonDataSet1.GununMenusu2' tablosuna veri yükler. Bunu gerektiği şekilde taşıyabilir, veya kaldırabilirsiniz.
+            this.gununMenusu2TableAdapter.Fill(this.pansiyonDataSet1.GununMenusu2);
+            timer1.Start();
+
+            LoadDailyMenu();
+        }
+
+       
+        private void LoadDailyMenu()
+        {
+            // Get the current day of the week (1: Sunday, 2: Monday, ..., 7: Saturday)
+            int currentDay = (int)DateTime.Now.DayOfWeek + 1;
+
+            using (SqlCommand komut1 = new SqlCommand("SELECT * FROM GununMenusu2 WHERE Gun_ID = @Gun_ID", baglanti))
+            {
+                komut1.Parameters.AddWithValue("@Gun_ID", currentDay);
+
+                baglanti.Open();
+
+                using (SqlDataReader oku1 = komut1.ExecuteReader())
+                {
+                    if (oku1.Read())
+                    {
+                        lblCorba.Text = oku1["Corba"].ToString();
+                        lblYemek.Text = oku1["AnaYemek"].ToString();
+                        lblTatli.Text = oku1["Tatli"].ToString();
+                    }
+                    else
+                    {
+                        lblCorba.Text = "Menü bulunamadı.";
+                        lblYemek.Text = "";
+                        lblTatli.Text = "";
+                    }
+                }
+
+                baglanti.Close();
+            }
+        }
+    }
+}
+
+
+
+
+	//Hava Durumu Formu
+
+using System;
+using System.Data.SqlClient;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmHavaDurumu : Form
+    {
+        SqlConnection baglanti = new SqlConnection(@"Data Source= .;Initial Catalog=Pansiyon;Integrated Security=True");
+
+        private int GunId;
+
+        public FrmHavaDurumu()
+        {
+            InitializeComponent();
+        }
+
+        private void FrmHavaDurumu_Load(object sender, EventArgs e)
+        {
+            timer1.Start();
+            UpdateGunId();
+            LoadWeatherData();
+        }
+
+        private void LoadWeatherData()
+        {
+            using (SqlCommand komut1 = new SqlCommand("SELECT * FROM HavaDurumu2 WHERE GunID = @GunID", baglanti))
+            {
+                komut1.Parameters.AddWithValue("@GunID", GunId);
+
+                baglanti.Open();
+
+                SqlDataReader oku1 = komut1.ExecuteReader();
+
+                if (oku1.Read())
+                {
+                    lblHava.Text = oku1["HavaDurumu"].ToString();
+                    lblDerece1.Text = oku1["GunduzSicaklik"].ToString();
+                    lblDerece2.Text = oku1["GeceSicaklik"].ToString();
+                }
+
+                baglanti.Close();
+            }
+        }
+
+        private void UpdateGunId()
+        {
+            // Set GunId based on the current day of the week
+            GunId = (int)DateTime.Now.DayOfWeek + 1;
+
+            // If GunId is greater than 7, reset it to 1 (to repeat for each day)
+            if (GunId > 7)
+            {
+                GunId = 1;
+            }
+        }
+
+        private void timer1_Tick_1(object sender, EventArgs e)
+        {
+            lblTarih.Text = DateTime.Now.ToLongDateString();
+            lblSaat.Text = DateTime.Now.ToLongTimeString();
+
+            // Update GunId based on the current day of the week
+            UpdateGunId();
+
+            // Load weather data based on the updated GunId
+            LoadWeatherData();
+        }
+    }
+}
+
+
+
+
+	//Gazete Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmGazete : Form
+    {
+        public FrmGazete()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.milligazete.com.tr/ ");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.milliyet.com.tr/");
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.sozcu.com.tr/");
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.hurriyet.com.tr/");
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.posta.com.tr/");
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.fotomac.com.tr/");
+        }
+    }
+}
+
+
+
+
+
+	//Radyo formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmRadyo : Form
+    {
+        public FrmRadyo()
+        {
+            InitializeComponent();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            axWindowsMediaPlayer1.URL = "http://37.247.98.8/stream/166/";
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            axWindowsMediaPlayer1.URL = "http://radyo.yayin.com.tr:8286/;";
+        }
+
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            axWindowsMediaPlayer1.URL = " http://yayin.liderhost.net:8028/;;";
+        }
+    }
+}
+
+
+
+
+
+	//Market Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmMarket : Form
+    {
+        public FrmMarket()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.google.com/search?sca_esv=594199241&tbs=lf:1,lf_ui:10&tbm=lcl&sxsrf=AM9HkKkB2KaBXxG1skdBI6sb3oytnJrG_g:1703761548992&q=elaz%C4%B1%C4%9F+en+yak%C4%B1n+marketler&rflfq=1&num=10&ved=2ahUKEwjggaOv_rGDAxVJSPEDHZ2rBdYQtgN6BAgMEAI#rlfi=hd:;si:;mv:[[38.685069899999995,39.2345332],[38.664801,39.158120499999995]];tbs:lrf:!1m4!1u3!2m2!3m1!1e1!1m4!1u2!2m2!2m1!1e1!2m1!1e2!2m1!1e3!2m4!1e17!4m2!17m1!1e2!3sIAE,lf:1,lf_ui:10");
+        }
+    }
+}
+
+
+
+
+	//Gezi Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmGezi : Form
+    {
+        public FrmGezi()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.etstur.com/letsgo/elazigda-gorulmesi-gereken-12-yer/?gad_source=1&gclid=Cj0KCQiAnfmsBhDfARIsAM7MKi2VhxJsFJOxESttc7Cxr9hvFw6xpZnTuuHb_Nywdb1TBcxmQwrx108aAndIEALw_wcB&gclsrc=aw.ds");
+        }
+    }
+}
+
+
+
+
+
+	//Hastane Formu
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    public partial class FrmHastane : Form
+    {
+        public FrmHastane()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            webBrowser1.Navigate("https://www.google.com/search?q=elaz%C4%B1%C4%9F+en+yak%C4%B1n+hastaneler&sca_esv=594199241&tbm=lcl&sxsrf=AM9HkKn08lnV2djaqlKV4orlnqFb58DJ1Q%3A1703770307673&ei=w3iNZe_WKPvXwPAPpJSl8Ak&udm=&ved=0ahUKEwivxN7_nrKDAxX7KxAIHSRKCZ4Q4dUDCAk&uact=5&oq=elaz%C4%B1%C4%9F+en+yak%C4%B1n+hastaneler&gs_lp=Eg1nd3Mtd2l6LWxvY2FsIh1lbGF6xLHEnyBlbiB5YWvEsW4gaGFzdGFuZWxlcjIIEAAYgAQYogQyCBAAGIAEGKIEMggQABiABBiiBEjhJ1CVBFjIInAAeACQAQCYAcIBoAGPFqoBBDAuMjC4AQPIAQD4AQHCAgQQIxgnwgIFEAAYgATCAgYQABgWGB7CAgUQIRigAcICCBAhGBYYHhgdwgIHECEYoAEYCogGAQ&sclient=gws-wiz-local#rlfi=hd:;si:;mv:[[38.6909409,39.2802481],[38.6549322,39.1494432]];tbs:lrf:!1m4!1u3!2m2!3m1!1e1!1m4!1u2!2m2!2m1!1e1!2m1!1e2!2m1!1e3!2m4!1e17!4m2!17m1!1e2!3sIAE,lf:1,lf_ui:2");
+        }
+    }
+}
+
+
+
+
+
+	//Program.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Firat_Pansiyon
+{
+    internal static class Program
+    {
+        /// <summary>
+        /// Uygulamanın ana girdi noktası.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new HosGeldiniz());
+        }
+    }
+}
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
